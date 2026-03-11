@@ -1,7 +1,7 @@
 import json
 from urllib import error, request
 
-from rag_index import EMBED_MODEL_NAME, INDEX_DIR, LLM_MODEL_NAME, SOURCE_PDF, build_index
+from rag_index import DOCS_DIR, EMBED_MODEL_NAME, INDEX_DIR, LLM_MODEL_NAME, build_index
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 INDEX_FILE = INDEX_DIR / "index.faiss"
@@ -9,19 +9,24 @@ INDEX_FILE = INDEX_DIR / "index.faiss"
 
 def load_vector_store():
     try:
-        from langchain_community.embeddings import OllamaEmbeddings
         from langchain_community.vectorstores import FAISS
     except ModuleNotFoundError:
         print(
-            "Missing dependencies. Install langchain-community and "
-            "langchain-text-splitters in the Python environment running this script."
+            "Missing dependencies. Install `langchain-community` in the Python "
+            "environment running this script."
         )
         return None
 
-    embeddings = OllamaEmbeddings(model=EMBED_MODEL_NAME)
+    try:
+        from rag_index import get_ollama_embeddings
+    except ImportError:
+        print("Could not import the embedding configuration from rag_index.py.")
+        return None
+
+    embeddings = get_ollama_embeddings()
 
     if not INDEX_FILE.exists():
-        print(f"Index not found at {INDEX_FILE}. Building it from {SOURCE_PDF.name}...")
+        print(f"Index not found at {INDEX_FILE}. Building it from PDFs in {DOCS_DIR}...")
         try:
             build_index()
         except (FileNotFoundError, RuntimeError) as exc:
