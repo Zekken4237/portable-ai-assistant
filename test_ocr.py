@@ -6,8 +6,8 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 images = convert_from_path(
     r"docs\Machiavelli,+The+Prince.pdf",
     poppler_path=r"C:\Users\PC\Downloads\Release-25.12.0-0\poppler-25.12.0\Library\bin",
-    dpi=300,
-)
+    dpi=200,
+)[:20]
 
 text = pytesseract.image_to_string(
     images[0],

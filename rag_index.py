@@ -47,7 +47,7 @@ def load_pdf_with_ocr(pdf_path: Path):
         images = convert_from_path(
             str(pdf_path),
             poppler_path=str(POPPLER_BIN_DIR),
-            dpi=300,
+            dpi=200,
         )
     except Exception as exc:
         raise RuntimeError(
@@ -57,7 +57,7 @@ def load_pdf_with_ocr(pdf_path: Path):
 
     documents = []
 
-    for i, img in enumerate(images):
+    for i, img in enumerate(images[:20]):
         try:
             text = pytesseract.image_to_string(
                 img,
